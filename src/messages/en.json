@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "switch": "Switch Language"
+  },
+  "home": {
+    "helpHint": "Type 'help' to see available commands."
+  },
+  "about": {
+    "title": "About me"
+  },
+  "projects": {
+    "title": "Projects"
+  }
+}
