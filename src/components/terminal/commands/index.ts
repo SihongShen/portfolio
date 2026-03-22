@@ -23,8 +23,8 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
     execute: () => {
       navigate(`/${locale}/about`);
       return locale === "zh"
-        ? "正在打开 关于我 页面…\n> 成功打开"
-        : "Opening About Me page...\n> Successfully opened";
+        ? "正在打开 关于我 页面…\n 成功打开"
+        : "Opening About Me page...\nSuccessfully opened";
     }
   });
 
@@ -36,7 +36,7 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
       const tagsStr = projectTags.length > 0 ? projectTags.join(", ") : "None";
       return locale === "zh" 
         ? `正在打开 我的项目 页面…\n> 成功打开\n> 可用的搜索tag: ${tagsStr}` 
-        : `Opening Projects page...\n> Successfully opened\n> Available tags for searching: ${tagsStr}`;
+        : `Opening Projects page...\nSuccessfully opened\nAvailable tags for searching: ${tagsStr}`;
     }
   });
 

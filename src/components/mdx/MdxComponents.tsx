@@ -32,6 +32,10 @@ export function MdxH2({ children }: { children: ReactNode }) {
   return <h2 className="mb-4 mt-8 text-xl text-[var(--terminal-secondary)]">{children}</h2>;
 }
 
+export function MdxH3({ children }: { children: ReactNode }) {
+  return <h3 className="mb-3 mt-6 text-lg font-regular">{children}</h3>;
+}
+
 export function MdxUl({ children }: { children: ReactNode }) {
   return <ul className="space-y-2 border-l border-[var(--terminal-primary)]/40 pl-4 mb-4">{children}</ul>;
 }

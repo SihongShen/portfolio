@@ -3,17 +3,18 @@ import path from "path";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { type ReactNode } from "react";
 import AboutClient from "./AboutClient";
-import { MdxH1, MdxH2, MdxP, MdxUl, MdxLi } from "@/components/mdx/MdxComponents";
+import { MdxH1, MdxH2, MdxH3, MdxP, MdxUl, MdxLi } from "@/components/mdx/MdxComponents";
 
 const mdxComponents = {
   h1: MdxH1,
   h2: MdxH2,
+  h3: MdxH3,
   p: MdxP,
   ul: MdxUl,
   li: MdxLi,
   // Make strong tags slightly brighter or use secondary color
   strong: ({ children }: { children: ReactNode }) => (
-    <strong className="text-[var(--terminal-secondary)] font-normal">{children}</strong>
+    <strong className="text-[var(--terminal-secondary)] font-bold">{children}</strong>
   ),
   // Style inline code blocks for terminal feel
   code: ({ children }: { children: ReactNode }) => (
