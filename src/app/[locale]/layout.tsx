@@ -26,8 +26,10 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <ThreeBackground />
-      <PageTransition>{children}</PageTransition>
+      <div className="min-h-screen bg-black text-[var(--terminal-primary)] flex flex-col relative w-full">
+        <ThreeBackground />
+        <PageTransition>{children}</PageTransition>
+      </div>
     </NextIntlClientProvider>
   );
 }

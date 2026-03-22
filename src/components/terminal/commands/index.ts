@@ -19,37 +19,34 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
 
   commands.push({
     name: "about",
-    description: locale === "zh" ? "跳转 about 页面" : "Go to about page",
+    description: locale === "zh" ? "了解关于我的信息" : "Go to about page",
     execute: () => {
       navigate(`/${locale}/about`);
       return locale === "zh"
-        ? "正在打开 About 页面… 终端将保持内容。"
-        : "Opening About page... terminal history is preserved.";
+        ? "正在打开 关于我 页面…\n> 成功打开"
+        : "Opening About Me page...\n> Successfully opened";
     }
   });
 
   commands.push({
     name: "projects",
-    description: locale === "zh" ? "跳转项目页并显示标签" : "Go to projects page with tags",
+    description: locale === "zh" ? "查看我的项目" : "Check out my projects",
     execute: () => {
       navigate(`/${locale}/projects`);
-      const prefix = locale === "zh" ? "正在打开 Projects 页面。可用标签: " : "Opening Projects page. Available tags: ";
-      return `${prefix}${projectTags.join(", ")}`;
+      const tagsStr = projectTags.length > 0 ? projectTags.join(", ") : "None";
+      return locale === "zh" 
+        ? `正在打开 我的项目 页面…\n> 成功打开\n> 可用的搜索tag: ${tagsStr}` 
+        : `Opening Projects page...\n> Successfully opened\n> Available tags for searching: ${tagsStr}`;
     }
   });
 
   commands.push({
     name: "contact",
-    description: locale === "zh" ? "显示联系方式并进入交互" : "Show contact details and start interactive mode",
-    execute: () =>
-      [
-        "Let’s get in touch.",
-        "email: iris@example.com",
-        "github: github.com/iris",
-        "linkedin: linkedin.com/in/iris",
-        "小红书: @iris-portfolio",
-        "Interactive contact flow started..."
-      ].join("\n")
+    description: locale === "zh" ? "查看我的联系方式" : "Show contact details",
+    execute: () => {
+      return `  e-mail | Github | Linkedin | 小红书
+> ${locale === "zh" ? "请输入以上任意平台名称获取详情 (如: Github)" : "Please enter any platform name above to get details (e.g. Github)"}`;
+    }
   });
 
   commands.push({

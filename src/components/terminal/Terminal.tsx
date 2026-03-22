@@ -86,10 +86,7 @@ function terminalReducer(state: TerminalState, action: TerminalAction): Terminal
 
 const initialContactState: ContactFlowState = {
   active: false,
-  step: "name",
-  name: "",
-  email: "",
-  message: ""
+  step: "platform_selection",
 };
 
 export default function Terminal({ locale, welcomeLines, floating = false, onLocaleChange }: TerminalProps) {
@@ -184,24 +181,38 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     dispatch({ type: "history", value: input });
 
     if (contactFlow.active) {
-      if (contactFlow.step === "name") {
-        setContactFlow((prev) => ({ ...prev, step: "email", name: input }));
-        dispatch({ type: "push", line: { type: "output", content: "Your email:" } });
+      if (contactFlow.step === "platform_selection") {
+        const platform = input.toLowerCase();
+        
+        switch (platform) {
+          case "e-mail":
+          case "email":
+            dispatch({ type: "push", line: { type: "output", content: "ss18264@nyu.edu" } });
+            setContactFlow(initialContactState);
+            break;
+          case "github":
+            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to Github..." } });
+            window.open("https://github.com/SihongShen", "_blank");
+            setContactFlow(initialContactState);
+            break;
+          case "linkedin":
+            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to LinkedIn..." } });
+            window.open("https://linkedin.com/in/sihongshen", "_blank");
+            setContactFlow(initialContactState);
+            break;
+          case "小红书":
+          case "xhs":
+          case "xiaohongshu":
+            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to 小红书..." } });
+            window.open("https://www.xiaohongshu.com/user/profile/6520f0f1000000002402f4ad", "_blank");
+            setContactFlow(initialContactState);
+            break;
+          default:
+            dispatch({ type: "push", line: { type: "error", content: `Unknown platform: ${input}. Please enter 'e-mail', 'Github', 'Linkedin', or '小红书'. Or press Ctrl+C to cancel.` } });
+            break;
+        }
         return;
       }
-
-      if (contactFlow.step === "email") {
-        setContactFlow((prev) => ({ ...prev, step: "message", email: input }));
-        dispatch({ type: "push", line: { type: "output", content: "Message:" } });
-        return;
-      }
-
-      const payload = { ...contactFlow, message: input };
-      setContactFlow(initialContactState);
-      dispatch({ type: "push", line: { type: "output", content: "> Sending..." } });
-      dispatch({ type: "push", line: { type: "output", content: "> Message sent! I will get back to you soon." } });
-      console.log("Contact flow payload", payload);
-      return;
     }
 
     const { command: commandName, args } = parseCommand(input);
@@ -223,7 +234,6 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
 
     if (commandName === "contact") {
       setContactFlow({ ...initialContactState, active: true });
-      dispatch({ type: "push", line: { type: "output", content: "Your name:" } });
     }
 
     dispatch({ type: "push", line: { type: "output", content: result } });
@@ -345,7 +355,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
           />
           <TerminalBody lines={state.lines} />
           <TerminalInput
-            prompt={contactFlow.active ? `${contactFlow.step}>` : "$"}
+            prompt={contactFlow.active ? `platform>` : "$"}
             onSubmit={(value) => {
               handleCommand(value);
             }}

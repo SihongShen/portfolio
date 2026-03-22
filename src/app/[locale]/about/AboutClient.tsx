@@ -20,8 +20,10 @@ export default function AboutClient({ children, locale }: AboutClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[var(--terminal-primary)]">
-      <main className="mx-auto max-w-5xl px-6 pb-16 pt-8">
+    <div className="w-full min-h-screen text-[var(--terminal-primary)] flex flex-col">
+      {/* Global empty header placeholder for visual balance */}
+      <header className="h-[72px] w-full shrink-0" />
+      <main className="mx-auto max-w-5xl px-6 pb-16 w-full flex-1">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

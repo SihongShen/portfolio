@@ -6,7 +6,7 @@
     "switch": "切换语言"
   },
   "home": {
-    "helpHint": "输入 'help' 查看可用命令。"
+    "helpHint": "输入'help'查看可用命令。"
   },
   "about": {
     "title": "关于我"

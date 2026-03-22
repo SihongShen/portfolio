@@ -56,7 +56,7 @@ export default function HomePage({ params }: HomePageProps) {
   };
 
   return (
-    <div className="relative min-h-screen bg-black">
+    <div className="relative w-full flex-1 flex flex-col items-center">
       <AnimatePresence mode="wait">
         {phase === "intro" ? (
           <IntroAnimation

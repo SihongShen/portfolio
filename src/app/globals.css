@@ -4,7 +4,7 @@
   --background: #000000;
   --terminal-primary: #54efea;
   --terminal-danger: #ec000f;
-  --terminal-secondary: #54efea; /* mapped to primary since we deleted original */
+  --terminal-secondary: #51ccdc; /* mapped to primary since we deleted original */
 }
 
 @theme inline {

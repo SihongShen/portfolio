@@ -14,14 +14,11 @@ export interface TerminalState {
   historyIndex: number;
 }
 
-export type ContactStep = "name" | "email" | "message";
+export type ContactStep = "platform_selection";
 
 export interface ContactFlowState {
   active: boolean;
   step: ContactStep;
-  name: string;
-  email: string;
-  message: string;
 }
 
 export interface Command {
