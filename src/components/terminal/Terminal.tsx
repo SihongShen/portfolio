@@ -19,7 +19,7 @@ interface TerminalProps {
   onLocaleChange: (locale: AppLocale) => void;
 }
 
-type FloatingTerminalState = "docked" | "expanded" | "centered";
+type FloatingTerminalState = "docked" | "expanded";
 const TERMINAL_STORAGE_KEY = "portfolio-terminal-state-v1";
 const TERMINAL_WELCOME_VERSION_KEY = "portfolio-terminal-welcome-version-v1";
 
@@ -96,10 +96,12 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
   const router = useRouter();
   const [state, dispatch] = useReducer(terminalReducer, initialState);
   const [contactFlow, setContactFlow] = useState<ContactFlowState>(initialContactState);
-  const [floatingState, setFloatingState] = useState<FloatingTerminalState>(floating ? "docked" : "centered");
+  const [floatingState, setFloatingState] = useState<FloatingTerminalState>("docked");
   const [hydrated, setHydrated] = useState(false);
   const [drag, setDrag] = useState({ x: 0, y: 0 });
   const dragPointer = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null);
+  const isDraggingRef = useRef(false);
+  const isHoveredRef = useRef(false);
 
   const projectTags = useMemo(
     () => Array.from(new Set(projects.flatMap((project) => project.tags))).sort((a, b) => a.localeCompare(b)),
@@ -263,22 +265,15 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     dispatch({ type: "push", line: { type: "output", content: "Contact flow cancelled." } });
   };
 
-  const goCenter = () => {
-    setFloatingState("centered");
-    setDrag({ x: 0, y: 0 });
-  };
-
-  const isCentered = !floating || floatingState === "centered";
-
   const wrapperClasses =
-    !floating || floatingState === "centered"
+    !floating
       ? "fixed inset-0 z-50 flex items-center justify-center"
       : floatingState === "expanded"
         ? "fixed right-6 top-24 z-40"
         : "fixed right-6 top-24 z-30";
 
   const terminalSizeClasses =
-    !floating || floatingState === "centered"
+    !floating
       ? "h-[min(72vh,680px)] w-[min(960px,92vw)]"
       : floatingState === "expanded"
         ? "h-[420px] w-[min(760px,78vw)]"
@@ -292,29 +287,29 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
         transition={{ duration: 0.3, ease: "easeOut" }}
         className={wrapperClasses}
         onMouseEnter={() => {
+          isHoveredRef.current = true;
           if (floating && floatingState === "docked") {
             setFloatingState("expanded");
           }
         }}
         onMouseLeave={() => {
-          if (floating && floatingState === "expanded") {
+          isHoveredRef.current = false;
+          // Only shrink back if we are not currently dragging it
+          if (floating && floatingState === "expanded" && !isDraggingRef.current) {
             setFloatingState("docked");
           }
         }}
       >
         <motion.div
-          className={`flex ${terminalSizeClasses} flex-col border border-[var(--terminal-primary)] bg-black/95`}
-          animate={isCentered ? { x: drag.x, y: drag.y } : { x: 0, y: 0 }}
-          onPointerDown={() => {
-            if (floating && floatingState !== "centered") {
-              goCenter();
-            }
-          }}
+          className={`flex ${terminalSizeClasses} flex-col border border-[var(--terminal-primary)] bg-black/95 transition-all duration-300 ease-out`}
+          animate={!floating ? { x: 0, y: 0 } : { x: drag.x, y: drag.y }}
         >
           <TerminalHeader
             onDragStart={
-              floating && floatingState === "centered"
+              floating
                 ? (event) => {
+                    isDraggingRef.current = true;
+                    // Prevent grabbing from turning it off if we just want to drag
                     dragPointer.current = {
                       startX: event.clientX,
                       startY: event.clientY,
@@ -333,6 +328,11 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
                     };
 
                     const up = () => {
+                      isDraggingRef.current = false;
+                      // If hover was lost while dragging, we shrink it now
+                      if (!isHoveredRef.current && floating) {
+                        setFloatingState("docked");
+                      }
                       window.removeEventListener("pointermove", move);
                       window.removeEventListener("pointerup", up);
                     };
@@ -347,9 +347,6 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
           <TerminalInput
             prompt={contactFlow.active ? `${contactFlow.step}>` : "$"}
             onSubmit={(value) => {
-              if (floating) {
-                goCenter();
-              }
               handleCommand(value);
             }}
             onHistory={handleHistory}

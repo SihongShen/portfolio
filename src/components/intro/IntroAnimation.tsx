@@ -18,6 +18,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
   const [inputValue, setInputValue] = useState("");
   const [selectedLocale, setSelectedLocale] = useState<AppLocale | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
+  const [isTurningOff, setIsTurningOff] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const loadingTimerRef = useRef<number | null>(null);
   const loadingDoneTimeoutRef = useRef<number | null>(null);
@@ -111,7 +112,12 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
 
           const waitMs = Math.floor(Math.random() * 1001) + 1000;
           window.setTimeout(() => {
-            onComplete(selectedLocale);
+            setIsTurningOff(true);
+            
+            // Wait 600ms for animation, plus 500ms before connecting to terminal => 1100ms
+            window.setTimeout(() => {
+              onComplete(selectedLocale);
+            }, 1100);
           }, waitMs);
 
           return 100;
@@ -149,7 +155,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
   const shownProgress = isFinishing ? progress : Math.min(progress, maxProgress);
 
   return (
-    <div className="crt-overlay relative flex min-h-screen w-full items-start justify-start bg-black p-6 text-[var(--terminal-primary)]">
+    <div className={`crt-overlay relative flex min-h-screen w-full items-start justify-start bg-black p-6 text-[var(--terminal-primary)] ${isTurningOff ? 'crt-turn-off' : ''}`}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-1 leading-[1.25] text-jitter">
         <div className="whitespace-pre">
           {baseText.slice(0, typedCount)}

@@ -60,7 +60,33 @@ body {
   75% { transform: translate(0.5px, 0.5px) skewX(0.2deg); opacity: 0.98; }
   100% { transform: translate(-0.5px, -0.5px) skewX(-0.2deg); opacity: 0.95; }
 }
+.crt-turn-off {
+  animation: crtTurnOff 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  transform-origin: center center;
+}
 
+@keyframes crtTurnOff {
+  0% {
+    transform: scale(1, 1);
+  }
+  30% {
+    transform: scale(1.8, 1.8); /* 逐渐放大 */
+    filter: brightness(1.5);
+  }
+  60% {
+    transform: scale(1.8, 0.005); /* Y轴急速收缩成线，屏幕中心 */
+    filter: brightness(3);
+  }
+  80% {
+    transform: scale(0.005, 0.005); /* X轴也收缩，变成一个光点 */
+    filter: brightness(10);
+    background-color: #fff; /* 白点闪烁 */
+  }
+  100% {
+    transform: scale(0, 0); /* 完全消失 */
+    opacity: 0;
+  }
+}
 .terminal-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
