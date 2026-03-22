@@ -9,7 +9,16 @@ export default function TerminalBody({ lines }: TerminalBodyProps) {
     <div className="terminal-scrollbar flex-1 overflow-y-auto px-4 py-3">
       <div className="space-y-1 whitespace-pre-wrap">
         {lines.map((line) => (
-          <div key={line.id} className={line.type === "input" ? "text-[var(--terminal-secondary)]" : "text-[var(--terminal-primary)]"}>
+          <div 
+            key={line.id} 
+            className={
+              line.type === "input" 
+                ? "text-[var(--terminal-primary)] opacity-80" 
+                : line.type === "error"
+                  ? "text-[var(--terminal-danger)]"
+                  : "text-[var(--terminal-primary)]"
+            }
+          >
             {line.content}
           </div>
         ))}

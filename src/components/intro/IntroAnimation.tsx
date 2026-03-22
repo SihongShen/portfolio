@@ -150,7 +150,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
 
   return (
     <div className="crt-overlay relative flex min-h-screen w-full items-start justify-start bg-black p-6 text-[var(--terminal-primary)]">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-1 leading-[1.25]">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-1 leading-[1.25] text-jitter">
         <div className="whitespace-pre">
           {baseText.slice(0, typedCount)}
           <span className="inline-block w-2">{cursorVisible ? "_" : " "}</span>

@@ -1,6 +1,6 @@
 export type Phase = "intro" | "terminal";
 
-export type TerminalLineType = "input" | "output" | "system";
+export type TerminalLineType = "input" | "output" | "system" | "error";
 
 export interface TerminalLine {
   id: number;

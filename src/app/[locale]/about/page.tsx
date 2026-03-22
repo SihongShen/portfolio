@@ -1,73 +1,51 @@
-"use client";
+import fs from "fs";
+import path from "path";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { type ReactNode } from "react";
+import AboutClient from "./AboutClient";
+import { MdxH1, MdxH2, MdxP, MdxUl, MdxLi } from "@/components/mdx/MdxComponents";
 
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { use } from "react";
-import Terminal from "@/components/terminal/Terminal";
-import type { AppLocale } from "@/lib/i18n";
+const mdxComponents = {
+  h1: MdxH1,
+  h2: MdxH2,
+  p: MdxP,
+  ul: MdxUl,
+  li: MdxLi,
+  // Make strong tags slightly brighter or use secondary color
+  strong: ({ children }: { children: ReactNode }) => (
+    <strong className="text-[var(--terminal-secondary)] font-normal">{children}</strong>
+  ),
+  // Style inline code blocks for terminal feel
+  code: ({ children }: { children: ReactNode }) => (
+    <code className="bg-[var(--terminal-primary)]/10 text-[var(--terminal-secondary)] px-1.5 py-0.5 rounded text-sm">
+      {children}
+    </code>
+  ),
+};
 
 interface AboutPageProps {
   params: Promise<{ locale: string }>;
 }
 
-export default function AboutPage({ params }: AboutPageProps) {
-  const { locale } = use(params);
-  const router = useRouter();
+export default async function AboutPage({ params }: AboutPageProps) {
+  const resolvedParams = await params;
+  const { locale } = resolvedParams;
 
-  const onLocaleChange = (nextLocale: AppLocale) => {
-    localStorage.setItem("preferred-locale", nextLocale);
-    router.push(`/${nextLocale}/about`);
-  };
+  // Path to the current locale's MDX file
+  const filePath = path.join(process.cwd(), "src/content/about", `${locale}.mdx`);
+  
+  // Fallback to English if file not found locally
+  const finalPath = fs.existsSync(filePath) 
+    ? filePath 
+    : path.join(process.cwd(), "src/content/about", "en.mdx");
+    
+  const source = fs.readFileSync(finalPath, "utf-8");
 
   return (
-    <div className="min-h-screen bg-black text-[var(--terminal-primary)]">
-      <main className="mx-auto max-w-5xl px-6 pb-16 pt-8 space-y-10">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-3xl tracking-wide"
-        >
-          About me
-        </motion.h1>
-
-        <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <h2 className="mb-2 text-xl text-[var(--terminal-secondary)]">Profile</h2>
-          <p>
-            I build interactive digital products with a focus on frontend engineering, thoughtful motion, and
-            terminal-inspired interfaces.
-          </p>
-        </motion.section>
-
-        <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <h2 className="mb-2 text-xl text-[var(--terminal-secondary)]">Skills</h2>
-          <div className="flex flex-wrap gap-2">
-            {[
-              "TypeScript",
-              "Next.js",
-              "Framer Motion",
-              "React",
-              "Node.js",
-              "UI Engineering"
-            ].map((skill) => (
-              <span key={skill} className="border border-[var(--terminal-primary)]/40 px-2 py-1">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <h2 className="mb-2 text-xl text-[var(--terminal-secondary)]">Timeline</h2>
-          <ul className="space-y-2 border-l border-[var(--terminal-primary)]/40 pl-4">
-            <li>2026 — Building portfolio systems and interactive web experiments</li>
-            <li>2025 — Frontend engineer, product and design collaboration</li>
-            <li>2022 — Computer science education and startup projects</li>
-          </ul>
-        </motion.section>
-      </main>
-
-      <canvas id="three-about-bg" className="hidden" />
-      <Terminal locale={locale as AppLocale} onLocaleChange={onLocaleChange} floating />
-    </div>
+    <AboutClient locale={locale}>
+      <div className="space-y-6">
+        <MDXRemote source={source} components={mdxComponents} />
+      </div>
+    </AboutClient>
   );
 }

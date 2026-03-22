@@ -206,7 +206,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     const command = commandMap.get(commandName);
 
     if (!command) {
-      dispatch({ type: "push", line: { type: "output", content: `command not found: ${commandName}` } });
+      dispatch({ type: "push", line: { type: "error", content: `command not found: ${commandName}` } });
       return;
     }
 

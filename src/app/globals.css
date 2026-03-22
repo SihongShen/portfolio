@@ -4,8 +4,7 @@
   --background: #000000;
   --terminal-primary: #54efea;
   --terminal-danger: #ec000f;
-  --terminal-secondary: #51ccdc;
-  --terminal-accent: #600db5;
+  --terminal-secondary: #54efea; /* mapped to primary since we deleted original */
 }
 
 @theme inline {
@@ -27,12 +26,39 @@ body {
 }
 
 .crt-overlay {
+  position: relative;
+}
+
+.crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.06) 1px,
-    transparent 1px
+    rgba(255, 255, 255, 0.12) 2px,
+    transparent 2px
   );
-  background-size: 100% 4px;
+  background-size: 100% 6px;
+  animation: scanlines 60s linear infinite;
+}
+
+@keyframes scanlines {
+    from { background-position: 0 0; }
+    to { background-position: 0 1000px; }
+}
+
+.text-jitter {
+  animation: text-flicker 0.0015s infinite alternate;
+}
+
+@keyframes text-flicker {
+  0% { transform: translate(0, 0) skewX(0); opacity: 1; }
+  25% { transform: translate(-0.5px, 0.5px) skewX(0.5deg); opacity: 0.9; }
+  50% { transform: translate(0.5px, -0.5px) skewX(-0.5deg); opacity: 1; }
+  75% { transform: translate(0.5px, 0.5px) skewX(0.2deg); opacity: 0.98; }
+  100% { transform: translate(-0.5px, -0.5px) skewX(-0.2deg); opacity: 0.95; }
 }
 
 .terminal-scrollbar::-webkit-scrollbar {
