@@ -45,5 +45,22 @@ export function MdxLi({ children }: { children: ReactNode }) {
 }
 
 export function MdxP({ children }: { children: ReactNode }) {
-  return <p className="mb-4 leading-relaxed">{children}</p>;
+  return <p className="mb-4 leading-relaxed text-lg">{children}</p>;
+}
+
+export function MdxA({ children, href = "" }: { children: ReactNode; href?: string }) {
+  // 如果链接没有以 http 或 / 开头（例如平时写的 "cloudie.work"），自动补全为绝对路径 https://
+  const isExternal = !href.startsWith("/") && !href.startsWith("#") && !href.startsWith("mailto:");
+  const finalHref = isExternal && !href.startsWith("http") ? `https://${href}` : href;
+
+  return (
+    <a
+      href={finalHref}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className="text-[var(--terminal-secondary)] underline decoration-dashed underline-offset-4 hover:text-[var(--terminal-primary)] hover:decoration-solid transition-all"
+    >
+      {children}
+    </a>
+  );
 }
