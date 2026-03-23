@@ -2,7 +2,7 @@ export interface ProjectItem {
   id: string;
   name: { en: string; zh: string };
   date: string; // 时间通常无需双语，如 "2026-02"
-  techStack: string[]; // 技术栈如 "Next.js" 通常通用
+  techStack: string[]; // 技术栈如 "Next.js"
   tags: string[]; // tag可以作为 key 进行通用，也可以配双语，这里简单起见可以是通用的标识符，UI上映射或者直接用纯英文短语
   description: { en: string; zh: string };
   documentationVideo?: string; // 视频链接可选并且通常通用
@@ -22,6 +22,7 @@ export const projects: ProjectItem[] = [
       zh: "以一场超现实的噩梦，讨论个体从虚无主义到向死而生的自我思想挣扎。"
     },
     documentationVideo: "https://example.com/memo-space-video",
+    featuredImage: "",
     hasContent: true
   }
 ];

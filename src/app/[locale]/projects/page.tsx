@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -21,10 +21,10 @@ const mdxComponents = {
   ul: MdxUl,
   li: MdxLi,
   a: MdxA,
-  strong: ({ children }: any) => (
+  strong: ({ children }: { children: React.ReactNode }) => (
     <strong className="text-[var(--terminal-primary)] font-bold font-medium drop-shadow-[0_0_8px_rgba(81,204,220,0.5)]">{children}</strong>
   ),
-  code: ({ children }: any) => (
+  code: ({ children }: { children: React.ReactNode }) => (
     <code className="bg-[var(--terminal-primary)]/10 text-[var(--terminal-secondary)] px-1.5 py-0.5 rounded text-sm">
       {children}
     </code>
