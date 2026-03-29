@@ -8,8 +8,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio Terminal",
-  description: "Personal portfolio with terminal-style interface",
+  title: "Sihong Shen",
+  description: "Sihong Shen's portfolio website.",
 };
 
 export default function RootLayout({

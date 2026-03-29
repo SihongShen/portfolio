@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import Terminal from "@/components/terminal/Terminal";
+import MobileTerminalTrigger from "@/components/layout/MobileTerminalTrigger";
 import { projects } from "@/data/projects";
 import type { AppLocale } from "@/lib/i18n";
 
@@ -91,7 +92,7 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
   return (
     <div className="w-full min-h-screen text-[var(--terminal-primary)] flex flex-col relative">
       <header className="h-[72px] w-full shrink-0 flex items-center justify-between px-6 md:px-12 max-w-[1440px] mx-auto">
-        <div>
+        <div className="flex items-center gap-4">
           {selected && (
             <button 
               className="md:hidden pointer-events-auto border border-[var(--terminal-primary)]/40 px-4 py-2 hover:bg-[var(--terminal-primary)]/10 transition-colors" 
@@ -101,11 +102,14 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
             </button>
           )}
         </div>
-        {selected && (
-          <div className="text-[var(--terminal-secondary)]">
-            {locale === "zh" ? "项目档案" : "Project Archive"}
-          </div>
-        )}
+        <div className="flex items-center gap-6">
+          {selected && (
+            <div className="text-[var(--terminal-secondary)]">
+              {locale === "zh" ? "项目档案" : "Project Archive"}
+            </div>
+          )}
+          <MobileTerminalTrigger locale={locale as AppLocale} onLocaleChange={onLocaleChange} />
+        </div>
       </header>
       
       {!selected ? (
@@ -292,7 +296,9 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
       )}
 
       <canvas id="three-projects-bg" className="hidden" />
-      <Terminal locale={locale as AppLocale} onLocaleChange={onLocaleChange} floating />
+      <div className="hidden md:block">
+        <Terminal locale={locale as AppLocale} onLocaleChange={onLocaleChange} floating />
+      </div>
     </div>
   );
 }

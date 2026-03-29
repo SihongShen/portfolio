@@ -17,6 +17,7 @@ interface TerminalProps {
   welcomeLines?: string[];
   floating?: boolean;
   onLocaleChange: (locale: AppLocale) => void;
+  onClose?: () => void;
 }
 
 type FloatingTerminalState = "docked" | "expanded";
@@ -89,7 +90,7 @@ const initialContactState: ContactFlowState = {
   step: "platform_selection",
 };
 
-export default function Terminal({ locale, welcomeLines, floating = false, onLocaleChange }: TerminalProps) {
+export default function Terminal({ locale, welcomeLines, floating = false, onLocaleChange, onClose }: TerminalProps) {
   const router = useRouter();
   const [state, dispatch] = useReducer(terminalReducer, initialState);
   const [contactFlow, setContactFlow] = useState<ContactFlowState>(initialContactState);
@@ -315,6 +316,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
           animate={!floating ? { x: 0, y: 0 } : { x: drag.x, y: drag.y }}
         >
           <TerminalHeader
+            onClose={onClose}
             onDragStart={
               floating
                 ? (event) => {
