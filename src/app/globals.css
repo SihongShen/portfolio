@@ -49,8 +49,10 @@ body {
     to { background-position: 0 1000px; }
 }
 
-.text-jitter {
-  animation: text-flicker 0.0015s infinite alternate;
+@media (prefers-reduced-motion: no-preference) {
+  .text-jitter {
+    animation: text-flicker 0.15s infinite alternate;
+  }
 }
 
 @keyframes text-flicker {

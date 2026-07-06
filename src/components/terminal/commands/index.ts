@@ -45,7 +45,7 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
     description: locale === "zh" ? "查看我的联系方式" : "Show contact details",
     execute: () => {
       return `  e-mail | Github | Linkedin | 小红书
-> ${locale === "zh" ? "请输入以上任意平台名称获取详情 (如: Github)" : "Please enter any platform name above to get details (e.g. Github)"}`;
+> ${locale === "zh" ? "请输入以上任意平台名称获取详情 (如: Github),输入 cancel 退出" : "Please enter any platform name above to get details (e.g. Github), or type 'cancel' to exit"}`;
     }
   });
 

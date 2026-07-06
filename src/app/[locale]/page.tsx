@@ -20,6 +20,8 @@ const asciiWelcome = `
                 𖥔 ݁ ˖   ✦           ݁₊ ⊹ . ݁˖ . ݁༉‧₊˚..     . ݁˖ . ݁. ݁₊ ⊹ . ݁˖ . ݁༉‧₊˚..𖥔 ݁ ˖   ✦    ‧₊˚     ݁                                                                                           
                                                         ݁₊ ⊹                                      `;
 
+const INTRO_SEEN_KEY = "intro-seen";
+
 interface HomePageProps {
   params: Promise<{ locale: string }>;
 }
@@ -29,6 +31,13 @@ export default function HomePage({ params }: HomePageProps) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("intro");
   const [locale, setLocale] = useState<AppLocale>(isValidLocale(routeLocale) ? routeLocale : "en");
+
+  useEffect(() => {
+    // Returning visitors in this tab already sat through the intro once.
+    if (sessionStorage.getItem(INTRO_SEEN_KEY)) {
+      setPhase("terminal");
+    }
+  }, []);
 
   useEffect(() => {
     if (!isValidLocale(routeLocale)) {
@@ -52,7 +61,9 @@ export default function HomePage({ params }: HomePageProps) {
   const switchLocale = (nextLocale: AppLocale) => {
     localStorage.setItem("preferred-locale", nextLocale);
     setLocale(nextLocale);
-    router.push(`/${nextLocale}`);
+    // Shallow URL update: a router.push would remount the page (new route
+    // param), resetting phase back to "intro" and replaying the whole animation.
+    window.history.replaceState(null, "", `/${nextLocale}`);
   };
 
   return (
@@ -62,6 +73,7 @@ export default function HomePage({ params }: HomePageProps) {
           <IntroAnimation
             key="intro"
             onComplete={(nextLocale) => {
+              sessionStorage.setItem(INTRO_SEEN_KEY, "1");
               switchLocale(nextLocale);
               setPhase("terminal");
             }}

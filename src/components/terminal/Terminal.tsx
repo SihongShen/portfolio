@@ -186,6 +186,12 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
         const platform = input.toLowerCase();
         
         switch (platform) {
+          case "cancel":
+          case "exit":
+          case "q":
+            dispatch({ type: "push", line: { type: "output", content: locale === "zh" ? "已退出联系方式流程。" : "Contact flow cancelled." } });
+            setContactFlow(initialContactState);
+            break;
           case "e-mail":
           case "email":
             dispatch({ type: "push", line: { type: "output", content: "ss18264@nyu.edu" } });
@@ -209,7 +215,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
             setContactFlow(initialContactState);
             break;
           default:
-            dispatch({ type: "push", line: { type: "error", content: `Unknown platform: ${input}. Please enter 'e-mail', 'Github', 'Linkedin', or '小红书'. Or press Ctrl+C to cancel.` } });
+            dispatch({ type: "push", line: { type: "error", content: locale === "zh" ? `未知平台: ${input}。请输入 'e-mail'、'Github'、'Linkedin' 或 '小红书',输入 'cancel' 退出。` : `Unknown platform: ${input}. Please enter 'e-mail', 'Github', 'Linkedin', or '小红书' — or type 'cancel' to exit.` } });
             break;
         }
         return;
@@ -358,6 +364,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
           <TerminalBody lines={state.lines} />
           <TerminalInput
             prompt={contactFlow.active ? `platform>` : "$"}
+            canCancel={contactFlow.active}
             onSubmit={(value) => {
               handleCommand(value);
             }}

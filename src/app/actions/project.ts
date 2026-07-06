@@ -3,8 +3,15 @@
 import fs from "fs";
 import path from "path";
 import { serialize } from "next-mdx-remote/serialize";
+import { projects } from "@/data/projects";
+import { isValidLocale } from "@/lib/i18n";
 
 export async function getProjectMdxSerialized(projectId: string, locale: string) {
+  // Server actions are publicly callable — never let these reach the filesystem unchecked.
+  if (!isValidLocale(locale) || !projects.some((project) => project.id === projectId)) {
+    return { success: false };
+  }
+
   try {
     const filePath = path.join(process.cwd(), "src/content/projects", locale, `${projectId}.mdx`);
     if (!fs.existsSync(filePath)) {
