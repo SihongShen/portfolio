@@ -16,10 +16,10 @@ export const projects: ProjectItem[] = [
     id: "self-woven-shackles",
     name: { en: "Self-Woven Shackles", zh: "自织枷锁" },
     date: "2024-05",
-    techStack: ["剪映"],
-    tags: ["video", "stories", "experimental", "stange core"],
-    description: { 
-      en: "A nightmarish journey into the essence of existence, reimaging the struggele for self-meaning through the philosophical lens of 'dying to live'.", 
+    techStack: ["剪映 (CapCut)"],
+    tags: ["video", "stories", "experimental", "strange core"],
+    description: {
+      en: "A nightmarish journey into the essence of existence, reimagining the struggle for self-meaning through the philosophical lens of 'dying to live'.",
       zh: "以一场超现实的噩梦，讨论个体从虚无主义到向死而生的自我思想挣扎。"
     },
     hasContent: true
@@ -31,7 +31,7 @@ export const projects: ProjectItem[] = [
     techStack: ["p5.js", "ml5.js", "Tone.js", "Web Audio API"],
     tags: ["machine learning", "music", "web installation"],
     description: { 
-      en: "An interactive web installation that uses machile learning to trigger and manipulate music based on user positions and movements, creating a collaborative and interesting musical experience.", 
+      en: "An interactive web installation that uses machine learning to trigger and manipulate music based on user positions and movements, creating a collaborative and interesting musical experience.",
       zh: "一个互动式网络装置，利用机器学习根据用户的位置和动作触发和操控音乐，创造一个协作且有趣的音乐体验。"
     },
     documentationVideo: "https://editor.p5js.org/SihongShen/sketches/ny8Iz_9Py",
@@ -82,8 +82,8 @@ export const projects: ProjectItem[] = [
   {
     id: "thyself",
     name: { en: "Thyself", zh: "Thyself" },
-    date: "2026-2",
-    techStack: ["React", "JavaScript", "Tailwind CSS", "next.js", "Vite", "ECharts", "FAST API", "Vercel"],
+    date: "2026-02",
+    techStack: ["React", "JavaScript", "Tailwind CSS", "next.js", "Vite", "Chart.js", "FastAPI", "Vercel"],
     tags: ["Frontend development", "web app", "data visualization", "interactive design"],
     description: { 
       en: "A website that recommends high-quality articles tailored to each user's interests.", 

@@ -3,16 +3,22 @@ import path from "path";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { type ReactNode } from "react";
 import AboutClient from "./AboutClient";
-import { MdxH1, MdxH2, MdxH3, MdxP, MdxUl, MdxLi, MdxA } from "@/components/mdx/MdxComponents";
+import { MdxH1, MdxH2, MdxH3, MdxH4, MdxP, MdxUl, MdxOl, MdxLi, MdxA, MdxBlockquote, MdxPre, MdxHr, MdxImg } from "@/components/mdx/MdxComponents";
 
 const mdxComponents = {
   h1: MdxH1,
   h2: MdxH2,
   h3: MdxH3,
+  h4: MdxH4,
   p: MdxP,
   ul: MdxUl,
+  ol: MdxOl,
   li: MdxLi,
   a: MdxA,
+  blockquote: MdxBlockquote,
+  pre: MdxPre,
+  hr: MdxHr,
+  img: MdxImg,
   // Make strong tags slightly brighter or use secondary color
   strong: ({ children }: { children: ReactNode }) => (
     <strong className="text-[var(--terminal-primary)] font-bold drop-shadow-[0_0_8px_rgba(81,204,220,0.5)]">{children}</strong>

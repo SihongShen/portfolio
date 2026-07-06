@@ -34,9 +34,9 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
     execute: () => {
       navigate(`/${locale}/projects`);
       const tagsStr = projectTags.length > 0 ? projectTags.join(", ") : "None";
-      return locale === "zh" 
-        ? `正在打开 我的项目 页面…\n> 成功打开\n> 可用的搜索tag: ${tagsStr}` 
-        : `Opening Projects page...\nSuccessfully opened\nAvailable tags for searching: ${tagsStr}`;
+      return locale === "zh"
+        ? `正在打开 我的项目 页面…\n> 成功打开\n> 项目 tags: ${tagsStr}`
+        : `Opening Projects page...\nSuccessfully opened\nProject tags: ${tagsStr}`;
     }
   });
 

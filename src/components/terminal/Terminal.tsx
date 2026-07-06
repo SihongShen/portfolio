@@ -174,7 +174,14 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     }
 
     try {
-      localStorage.setItem(TERMINAL_STORAGE_KEY, JSON.stringify({ ...state, contactActive: contactFlow.active }));
+      // Cap what we persist so years of history can't outgrow the storage quota.
+      const persisted = {
+        ...state,
+        lines: state.lines.slice(-200),
+        commandHistory: state.commandHistory.slice(-100),
+        contactActive: contactFlow.active
+      };
+      localStorage.setItem(TERMINAL_STORAGE_KEY, JSON.stringify(persisted));
     } catch {
       // Storage full or unavailable — the terminal still works, just without persistence.
     }

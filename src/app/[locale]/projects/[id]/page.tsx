@@ -11,16 +11,22 @@ import type { AppLocale } from "@/lib/i18n";
 
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { getProjectMdxSerialized } from "@/app/actions/project";
-import { MdxH1, MdxH2, MdxH3, MdxP, MdxUl, MdxLi, MdxA } from "@/components/mdx/MdxComponents";
+import { MdxH1, MdxH2, MdxH3, MdxH4, MdxP, MdxUl, MdxOl, MdxLi, MdxA, MdxBlockquote, MdxPre, MdxHr, MdxImg } from "@/components/mdx/MdxComponents";
 
 const mdxComponents = {
   h1: MdxH1,
   h2: MdxH2,
   h3: MdxH3,
+  h4: MdxH4,
   p: MdxP,
   ul: MdxUl,
+  ol: MdxOl,
   li: MdxLi,
   a: MdxA,
+  blockquote: MdxBlockquote,
+  pre: MdxPre,
+  hr: MdxHr,
+  img: MdxImg,
   strong: ({ children }: { children: React.ReactNode }) => (
     <strong className="text-[var(--terminal-primary)] font-bold font-medium drop-shadow-[0_0_8px_rgba(81,204,220,0.5)]">{children}</strong>
   ),
