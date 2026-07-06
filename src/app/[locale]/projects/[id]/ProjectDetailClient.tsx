@@ -70,9 +70,13 @@ export default function ProjectDetailClient({ locale, id, mdxAvailable, children
 
             <div className="flex flex-wrap gap-2">
               {selected.tags.map((tag) => (
-                <span key={tag} className="px-1 py-1 text-[var(--terminal-secondary)]">
+                <Link
+                  key={tag}
+                  href={`/${locale}/projects?tag=${encodeURIComponent(tag)}`}
+                  className="border border-[var(--terminal-secondary)]/40 px-2 py-1 text-sm text-[var(--terminal-secondary)] hover:border-[var(--terminal-primary)]/60 hover:text-[var(--terminal-primary)] hover:bg-[var(--terminal-primary)]/10 transition-colors"
+                >
                   #{tag}
-                </span>
+                </Link>
               ))}
             </div>
 

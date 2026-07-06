@@ -16,7 +16,10 @@
     "back": "← 返回",
     "archive": "项目档案",
     "prev": "上一个项目",
-    "next": "下一个项目"
+    "next": "下一个项目",
+    "filterPlaceholder": "输入以筛选项目…",
+    "noResults": "没有匹配的项目。",
+    "clearFilters": "清除筛选"
   },
   "blog": {
     "title": "博客",

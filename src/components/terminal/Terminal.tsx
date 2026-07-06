@@ -102,6 +102,14 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
   const isDraggingRef = useRef(false);
   const isHoveredRef = useRef(false);
   const terminalBoxRef = useRef<HTMLDivElement>(null);
+  const pendingNavTimers = useRef<number[]>([]);
+
+  useEffect(() => {
+    const timers = pendingNavTimers.current;
+    return () => {
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, []);
 
   const focusInput = () => {
     // Don't steal focus while the user is selecting text to copy.
@@ -122,7 +130,20 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     () =>
       buildCommands({
         locale,
-        navigate: (path) => router.push(path),
+        navigate: (path, successMessage) => {
+          if (!successMessage) {
+            router.push(path);
+            return;
+          }
+
+          // Print the success line at the moment the route actually changes,
+          // instead of claiming success before the page is visible.
+          const timer = window.setTimeout(() => {
+            dispatch({ type: "push", line: { type: "output", content: successMessage } });
+            router.push(path);
+          }, 650);
+          pendingNavTimers.current.push(timer);
+        },
         switchLocale: onLocaleChange,
         projectTags
       }),

@@ -3,7 +3,9 @@ import type { Command } from "@/types/terminal";
 
 interface BuildCommandsOptions {
   locale: AppLocale;
-  navigate: (path: string) => void;
+  // With successMessage, navigation is delayed briefly and the message is
+  // printed at the moment the route actually changes.
+  navigate: (path: string, successMessage?: string) => void;
   switchLocale: (locale: AppLocale) => void;
   projectTags: string[];
 }
@@ -21,10 +23,8 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
     name: "about",
     description: locale === "zh" ? "了解关于我的信息" : "Go to about page",
     execute: () => {
-      navigate(`/${locale}/about`);
-      return locale === "zh"
-        ? "正在打开 关于我 页面…\n 成功打开"
-        : "Opening About Me page...\nSuccessfully opened";
+      navigate(`/${locale}/about`, locale === "zh" ? "> 成功打开" : "> Successfully opened");
+      return locale === "zh" ? "正在打开 关于我 页面…" : "Opening About Me page...";
     }
   });
 
@@ -32,11 +32,11 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
     name: "projects",
     description: locale === "zh" ? "查看我的项目" : "Check out my projects",
     execute: () => {
-      navigate(`/${locale}/projects`);
+      navigate(`/${locale}/projects`, locale === "zh" ? "> 成功打开" : "> Successfully opened");
       const tagsStr = projectTags.length > 0 ? projectTags.join(", ") : "None";
       return locale === "zh"
-        ? `正在打开 我的项目 页面…\n> 成功打开\n> 项目 tags: ${tagsStr}`
-        : `Opening Projects page...\nSuccessfully opened\nProject tags: ${tagsStr}`;
+        ? `正在打开 我的项目 页面…\n> 项目 tags: ${tagsStr}`
+        : `Opening Projects page...\nProject tags: ${tagsStr}`;
     }
   });
 

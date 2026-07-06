@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useMemo } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -18,11 +18,73 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
   const { locale } = use(params);
   const router = useRouter();
   const t = useTranslations("projects");
+  const [query, setQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const sorted = useMemo(
     () => [...projects].sort((a, b) => (a.date < b.date ? 1 : -1)),
     []
   );
+
+  const allTags = useMemo(
+    () => Array.from(new Set(projects.flatMap((project) => project.tags))).sort((a, b) => a.localeCompare(b)),
+    []
+  );
+
+  // Allow deep links like /projects?tag=video (comma-separated for multiple).
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get("tag");
+    if (!param) {
+      return;
+    }
+
+    const initial = param.split(",").filter((tag) => allTags.includes(tag));
+    if (initial.length) {
+      setSelectedTags(initial);
+    }
+  }, [allTags]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) => {
+      const next = prev.includes(tag) ? prev.filter((item) => item !== tag) : [...prev, tag];
+
+      const searchParams = new URLSearchParams(window.location.search);
+      if (next.length) {
+        searchParams.set("tag", next.join(","));
+      } else {
+        searchParams.delete("tag");
+      }
+      const qs = searchParams.toString();
+      window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
+
+      return next;
+    });
+  };
+
+  const clearFilters = () => {
+    setSelectedTags([]);
+    setQuery("");
+    window.history.replaceState(null, "", window.location.pathname);
+  };
+
+  const normalizedQuery = query.trim().toLowerCase();
+  const visible = sorted.filter((project) => {
+    const matchesTags = selectedTags.length === 0 || selectedTags.some((tag) => project.tags.includes(tag));
+    if (!matchesTags) {
+      return false;
+    }
+
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    const haystack = [project.name.en, project.name.zh, ...project.tags, ...project.techStack]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(normalizedQuery);
+  });
+
+  const hasActiveFilters = selectedTags.length > 0 || normalizedQuery.length > 0;
 
   const onLocaleChange = (nextLocale: AppLocale) => {
     rememberLocale(nextLocale);
@@ -45,8 +107,52 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
             transition={{ duration: 0.4 }}
           >
             <h1 className="mb-6 text-3xl">{t("title")}</h1>
+
+            <div className="mb-8 space-y-4">
+              <label className="flex max-w-md items-center gap-2 border border-[var(--terminal-primary)]/40 px-3 py-2 focus-within:border-[var(--terminal-primary)] transition-colors">
+                <span className="text-[var(--terminal-secondary)]">&gt;</span>
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={t("filterPlaceholder")}
+                  className="flex-1 bg-transparent outline-none placeholder:text-[var(--terminal-secondary)]/40"
+                />
+              </label>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {allTags.map((tag) => {
+                  const active = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      aria-pressed={active}
+                      className={`border px-2 py-1 text-sm transition-colors ${
+                        active
+                          ? "border-[var(--terminal-primary)] bg-[var(--terminal-primary)]/15 text-[var(--terminal-primary)] shadow-[0_0_8px_rgba(81,204,220,0.35)]"
+                          : "border-[var(--terminal-secondary)]/40 text-[var(--terminal-secondary)] hover:border-[var(--terminal-primary)]/60 hover:text-[var(--terminal-primary)]"
+                      }`}
+                    >
+                      #{tag}
+                    </button>
+                  );
+                })}
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="px-2 py-1 text-sm text-[var(--terminal-secondary)] underline decoration-dashed underline-offset-4 hover:text-[var(--terminal-primary)] transition-colors"
+                  >
+                    {t("clearFilters")}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {visible.length === 0 ? (
+              <p className="text-[var(--terminal-secondary)] opacity-70">{t("noResults")}</p>
+            ) : (
             <div className="flex flex-col gap-5">
-              {sorted.map((project) => (
+              {visible.map((project) => (
                 <Link
                 key={project.id}
                 href={`/${locale}/projects/${project.id}`}
@@ -85,6 +191,7 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
               </Link>
             ))}
           </div>
+            )}
         </motion.div>
       </main>
 
