@@ -1,14 +1,7 @@
-interface BlogDetailPageProps {
-  params: Promise<{ slug: string }>;
-}
+import { notFound } from "next/navigation";
 
-export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
-  const { slug } = await params;
-
-  return (
-    <main className="min-h-screen bg-black px-6 py-24 text-[var(--terminal-primary)]">
-      <h1 className="mb-4 text-3xl">{slug}</h1>
-      <p>MDX detail placeholder. This route is reserved for next-mdx-remote integration.</p>
-    </main>
-  );
+// No posts exist yet — every slug is a real 404 until content lands in
+// /src/content/blog and this route gets its mdx integration.
+export default async function BlogDetailPage() {
+  notFound();
 }

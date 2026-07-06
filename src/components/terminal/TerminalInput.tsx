@@ -8,7 +8,18 @@ interface TerminalInputProps {
   onHistory: (direction: "up" | "down") => string;
   onCancel: () => void;
   canCancel?: boolean;
+  completions?: string[];
   prompt?: string;
+}
+
+function longestCommonPrefix(values: string[]): string {
+  let prefix = values[0] ?? "";
+  for (const value of values) {
+    while (!value.startsWith(prefix)) {
+      prefix = prefix.slice(0, -1);
+    }
+  }
+  return prefix;
 }
 
 export default function TerminalInput({
@@ -17,6 +28,7 @@ export default function TerminalInput({
   onHistory,
   onCancel,
   canCancel = false,
+  completions = [],
   prompt = "$"
 }: TerminalInputProps) {
   const [value, setValue] = useState("");
@@ -56,6 +68,36 @@ export default function TerminalInput({
               event.preventDefault();
               setValue("");
               onCancel();
+              return;
+            }
+
+            if (event.key === "Tab") {
+              event.preventDefault();
+              const current = value;
+
+              // Second-token completion for "lang en|zh".
+              const langMatch = current.match(/^(lang\s+)(\S*)$/);
+              if (langMatch) {
+                const options = ["en", "zh"].filter((option) => option.startsWith(langMatch[2].toLowerCase()));
+                if (options.length === 1) {
+                  setValue(`${langMatch[1]}${options[0]}`);
+                }
+                return;
+              }
+
+              if (!current || current.includes(" ")) {
+                return;
+              }
+
+              const matches = completions.filter((name) => name.startsWith(current.toLowerCase()));
+              if (matches.length === 1) {
+                setValue(`${matches[0]} `);
+              } else if (matches.length > 1) {
+                const prefix = longestCommonPrefix(matches);
+                if (prefix.length > current.length) {
+                  setValue(prefix);
+                }
+              }
               return;
             }
 

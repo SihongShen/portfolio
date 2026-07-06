@@ -6,7 +6,7 @@ interface TerminalHeaderProps {
 export default function TerminalHeader({ onDragStart, onClose }: TerminalHeaderProps) {
   return (
     <div
-      className="flex items-center justify-between border-b border-[var(--terminal-primary)]/40 px-3 py-2 cursor-grab active:cursor-grabbing"
+      className="flex items-center justify-between border-b border-[var(--terminal-primary)]/40 px-3 py-2 cursor-grab active:cursor-grabbing select-none"
       onPointerDown={onDragStart}
     >
       <div className="flex items-center gap-2">

@@ -12,6 +12,14 @@
     "title": "关于我"
   },
   "projects": {
-    "title": "项目"
+    "title": "项目",
+    "back": "← 返回",
+    "archive": "项目档案",
+    "prev": "上一个项目",
+    "next": "下一个项目"
+  },
+  "blog": {
+    "title": "博客",
+    "placeholder": "文章正在路上。未来的内容会放在 /src/content/blog 下。"
   }
 }

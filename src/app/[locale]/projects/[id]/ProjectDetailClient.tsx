@@ -1,8 +1,10 @@
 "use client";
 
 import { type ReactNode, useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import Terminal from "@/components/terminal/Terminal";
 import MobileTerminalTrigger from "@/components/layout/MobileTerminalTrigger";
@@ -18,6 +20,7 @@ interface ProjectDetailClientProps {
 
 export default function ProjectDetailClient({ locale, id, mdxAvailable, children }: ProjectDetailClientProps) {
   const router = useRouter();
+  const t = useTranslations("projects");
 
   const sorted = useMemo(
     () => [...projects].sort((a, b) => (a.date < b.date ? 1 : -1)),
@@ -41,17 +44,15 @@ export default function ProjectDetailClient({ locale, id, mdxAvailable, children
     <div className="w-full min-h-screen text-[var(--terminal-primary)] flex flex-col relative">
       <header className="h-[72px] w-full shrink-0 flex items-center justify-between px-6 md:px-12 max-w-[1440px] mx-auto">
         <div className="flex items-center gap-4">
-          <button
+          <Link
             className="pointer-events-auto border border-[var(--terminal-primary)]/40 px-4 py-2 hover:bg-[var(--terminal-primary)]/10 transition-colors"
-            onClick={() => router.push(`/${locale}/projects`)}
+            href={`/${locale}/projects`}
           >
-            ← Back
-          </button>
+            {t("back")}
+          </Link>
         </div>
         <div className="flex items-center gap-6">
-          <div className="text-[var(--terminal-secondary)]">
-            {locale === "zh" ? "项目档案" : "Project Archive"}
-          </div>
+          <div className="text-[var(--terminal-secondary)]">{t("archive")}</div>
           <MobileTerminalTrigger locale={locale} onLocaleChange={onLocaleChange} />
         </div>
       </header>
@@ -157,12 +158,13 @@ export default function ProjectDetailClient({ locale, id, mdxAvailable, children
             <div className="relative h-full w-[120px]">
               {selectedIndex > 0 ? (
                 <div className="absolute top-1/2 -translate-y-1/2 left-0">
-                  <button
-                    className="pointer-events-auto border border-[var(--terminal-primary)]/40 px-4 py-3 text-lg hover:bg-[var(--terminal-primary)]/10 transition-colors"
-                    onClick={() => router.push(`/${locale}/projects/${sorted[selectedIndex - 1].id}`)}
+                  <Link
+                    className="pointer-events-auto inline-block border border-[var(--terminal-primary)]/40 px-4 py-3 text-lg hover:bg-[var(--terminal-primary)]/10 transition-colors"
+                    href={`/${locale}/projects/${sorted[selectedIndex - 1].id}`}
+                    aria-label={t("prev")}
                   >
                     ←
-                  </button>
+                  </Link>
                 </div>
               ) : null}
             </div>
@@ -171,12 +173,13 @@ export default function ProjectDetailClient({ locale, id, mdxAvailable, children
             <div className="relative h-full w-[120px]">
               {selectedIndex < sorted.length - 1 ? (
                 <div className="absolute top-1/2 -translate-y-1/2 right-0">
-                  <button
-                    className="pointer-events-auto border border-[var(--terminal-primary)]/40 px-4 py-3 text-lg hover:bg-[var(--terminal-primary)]/10 transition-colors"
-                    onClick={() => router.push(`/${locale}/projects/${sorted[selectedIndex + 1].id}`)}
+                  <Link
+                    className="pointer-events-auto inline-block border border-[var(--terminal-primary)]/40 px-4 py-3 text-lg hover:bg-[var(--terminal-primary)]/10 transition-colors"
+                    href={`/${locale}/projects/${sorted[selectedIndex + 1].id}`}
+                    aria-label={t("next")}
                   >
                     →
-                  </button>
+                  </Link>
                 </div>
               ) : null}
             </div>

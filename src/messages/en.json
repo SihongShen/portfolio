@@ -12,6 +12,14 @@
     "title": "About me"
   },
   "projects": {
-    "title": "Projects"
+    "title": "Projects",
+    "back": "← Back",
+    "archive": "Project Archive",
+    "prev": "Previous project",
+    "next": "Next project"
+  },
+  "blog": {
+    "title": "Blog",
+    "placeholder": "Posts are on the way. Future entries will live under /src/content/blog."
   }
 }

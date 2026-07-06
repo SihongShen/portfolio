@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
@@ -46,9 +47,9 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
             <h1 className="mb-6 text-3xl">{t("title")}</h1>
             <div className="flex flex-col gap-5">
               {sorted.map((project) => (
-                <button
+                <Link
                 key={project.id}
-                onClick={() => router.push(`/${locale}/projects/${project.id}`)}
+                href={`/${locale}/projects/${project.id}`}
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = e.clientX - rect.left;
@@ -81,7 +82,7 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
                     {project.description[locale as "en" | "zh"]}
                   </span>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </motion.div>

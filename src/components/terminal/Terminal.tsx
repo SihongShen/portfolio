@@ -101,6 +101,17 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
   const dragPointer = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null);
   const isDraggingRef = useRef(false);
   const isHoveredRef = useRef(false);
+  const terminalBoxRef = useRef<HTMLDivElement>(null);
+
+  const focusInput = () => {
+    // Don't steal focus while the user is selecting text to copy.
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed) {
+      return;
+    }
+
+    terminalBoxRef.current?.querySelector("input")?.focus();
+  };
 
   const projectTags = useMemo(
     () => Array.from(new Set(projects.flatMap((project) => project.tags))).sort((a, b) => a.localeCompare(b)),
@@ -214,19 +225,20 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
             setContactFlow(initialContactState);
             break;
           case "github":
-            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to Github..." } });
+            // Print the URL first so it survives a blocked popup.
+            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to Github... (https://github.com/SihongShen)" } });
             window.open("https://github.com/SihongShen", "_blank");
             setContactFlow(initialContactState);
             break;
           case "linkedin":
-            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to LinkedIn..." } });
+            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to LinkedIn... (https://linkedin.com/in/sihongshen)" } });
             window.open("https://linkedin.com/in/sihongshen", "_blank");
             setContactFlow(initialContactState);
             break;
           case "小红书":
           case "xhs":
           case "xiaohongshu":
-            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to 小红书..." } });
+            dispatch({ type: "push", line: { type: "output", content: "> Redirecting to 小红书... (https://www.xiaohongshu.com/user/profile/6520f0f1000000002402f4ad)" } });
             window.open("https://www.xiaohongshu.com/user/profile/6520f0f1000000002402f4ad", "_blank");
             setContactFlow(initialContactState);
             break;
@@ -333,14 +345,22 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
         }}
       >
         <motion.div
+          ref={terminalBoxRef}
           className={`flex ${terminalSizeClasses} flex-col border border-[var(--terminal-primary)] bg-black/95 transition-all duration-300 ease-out`}
           animate={!floating ? { x: 0, y: 0 } : { x: drag.x, y: drag.y }}
+          onClick={focusInput}
         >
           <TerminalHeader
             onClose={onClose}
             onDragStart={
               floating
                 ? (event) => {
+                    if (event.button !== 0) {
+                      return;
+                    }
+
+                    // Stop the drag from rubber-band-selecting the header text.
+                    event.preventDefault();
                     isDraggingRef.current = true;
                     // Prevent grabbing from turning it off if we just want to drag
                     dragPointer.current = {
@@ -368,10 +388,12 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
                       }
                       window.removeEventListener("pointermove", move);
                       window.removeEventListener("pointerup", up);
+                      window.removeEventListener("pointercancel", up);
                     };
 
                     window.addEventListener("pointermove", move);
                     window.addEventListener("pointerup", up);
+                    window.addEventListener("pointercancel", up);
                   }
                 : undefined
             }
@@ -380,6 +402,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
           <TerminalInput
             prompt={contactFlow.active ? `platform>` : "$"}
             canCancel={contactFlow.active}
+            completions={commands.map((command) => command.name)}
             onSubmit={(value) => {
               handleCommand(value);
             }}
