@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import Terminal from "@/components/terminal/Terminal";
 import MobileTerminalTrigger from "@/components/layout/MobileTerminalTrigger";
 import { projects } from "@/data/projects";
-import type { AppLocale } from "@/lib/i18n";
+import { rememberLocale, type AppLocale } from "@/lib/i18n";
 
 interface ProjectsPageProps {
   params: Promise<{ locale: string }>;
@@ -24,7 +24,7 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
   );
 
   const onLocaleChange = (nextLocale: AppLocale) => {
-    localStorage.setItem("preferred-locale", nextLocale);
+    rememberLocale(nextLocale);
     router.push(`/${nextLocale}/projects`);
   };
 

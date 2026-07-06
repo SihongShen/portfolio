@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
 import Terminal from "@/components/terminal/Terminal";
 import MobileTerminalTrigger from "@/components/layout/MobileTerminalTrigger";
-import type { AppLocale } from "@/lib/i18n";
+import { rememberLocale, type AppLocale } from "@/lib/i18n";
 import { motion } from "framer-motion";
 
 interface AboutClientProps {
@@ -16,7 +16,7 @@ export default function AboutClient({ children, locale }: AboutClientProps) {
   const router = useRouter();
 
   const onLocaleChange = (nextLocale: AppLocale) => {
-    localStorage.setItem("preferred-locale", nextLocale);
+    rememberLocale(nextLocale);
     router.push(`/${nextLocale}/about`);
   };
 

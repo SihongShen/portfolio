@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import Terminal from "@/components/terminal/Terminal";
 import MobileTerminalTrigger from "@/components/layout/MobileTerminalTrigger";
 import { projects } from "@/data/projects";
-import type { AppLocale } from "@/lib/i18n";
+import { rememberLocale, type AppLocale } from "@/lib/i18n";
 
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { getProjectMdxSerialized } from "@/app/actions/project";
@@ -91,7 +91,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { content: mdxContent, isLoading: isMdxLoading } = useProjectContent(selected?.hasContent ? selected.id : null, locale);
 
   const onLocaleChange = (nextLocale: AppLocale) => {
-    localStorage.setItem("preferred-locale", nextLocale);
+    rememberLocale(nextLocale);
     router.push(`/${nextLocale}/projects/${id}`);
   };
 

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { use, useEffect, useMemo, useState } from "react";
 import IntroAnimation from "@/components/intro/IntroAnimation";
 import Terminal from "@/components/terminal/Terminal";
-import { isValidLocale, type AppLocale } from "@/lib/i18n";
+import { isValidLocale, rememberLocale, type AppLocale } from "@/lib/i18n";
 import type { Phase } from "@/types/terminal";
 
 const asciiWelcome = ` 
@@ -38,15 +38,10 @@ export default function HomePage({ params }: HomePageProps) {
   }, []);
 
   useEffect(() => {
+    // The middleware negotiates the locale (NEXT_LOCALE cookie / Accept-Language)
+    // before this page renders, so the URL is the single source of truth here.
     if (isValidLocale(routeLocale)) {
       setLocale(routeLocale);
-    }
-
-    // Honor the stored preference, and keep the URL in sync with what we render.
-    const preferred = localStorage.getItem("preferred-locale");
-    if ((preferred === "en" || preferred === "zh") && preferred !== routeLocale) {
-      setLocale(preferred);
-      window.history.replaceState(null, "", `/${preferred}`);
     }
   }, [routeLocale]);
 
@@ -56,7 +51,7 @@ export default function HomePage({ params }: HomePageProps) {
   );
 
   const switchLocale = (nextLocale: AppLocale) => {
-    localStorage.setItem("preferred-locale", nextLocale);
+    rememberLocale(nextLocale);
     setLocale(nextLocale);
     // Shallow URL update: a router.push would remount the page (new route
     // param), resetting phase back to "intro" and replaying the whole animation.

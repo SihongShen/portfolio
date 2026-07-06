@@ -69,8 +69,8 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
       }
 
       const nextLocale = value as AppLocale;
+      // switchLocale implementations persist the choice (NEXT_LOCALE cookie).
       switchLocale(nextLocale);
-      localStorage.setItem("preferred-locale", nextLocale);
       return locale === "zh" ? `语言已切换为 ${nextLocale}` : `Language switched to ${nextLocale}`;
     }
   });
