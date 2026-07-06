@@ -40,7 +40,8 @@ const initialState: TerminalState = {
 
 function terminalReducer(state: TerminalState, action: TerminalAction): TerminalState {
   if (action.type === "hydrate") {
-    return action.value;
+    // Never restore a mid-history cursor — ArrowUp should start from the latest command.
+    return { ...action.value, historyIndex: -1 };
   }
 
   if (action.type === "replaceWelcome") {
@@ -68,7 +69,7 @@ function terminalReducer(state: TerminalState, action: TerminalAction): Terminal
   }
 
   if (action.type === "clear") {
-    return { ...state, lines: [] };
+    return { ...state, lines: [], commandHistory: [], historyIndex: -1 };
   }
 
   if (action.type === "history") {
@@ -128,9 +129,13 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     }
 
     try {
-      const parsed = JSON.parse(raw) as TerminalState;
+      const parsed = JSON.parse(raw) as TerminalState & { contactActive?: boolean };
       if (Array.isArray(parsed.lines) && Array.isArray(parsed.commandHistory) && typeof parsed.historyIndex === "number") {
         dispatch({ type: "hydrate", value: parsed });
+        // Restore an in-progress contact flow so the persisted platform prompt still works.
+        if (parsed.contactActive) {
+          setContactFlow({ ...initialContactState, active: true });
+        }
       }
     } catch {
       localStorage.removeItem(TERMINAL_STORAGE_KEY);
@@ -168,8 +173,12 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
       return;
     }
 
-    localStorage.setItem(TERMINAL_STORAGE_KEY, JSON.stringify(state));
-  }, [hydrated, state]);
+    try {
+      localStorage.setItem(TERMINAL_STORAGE_KEY, JSON.stringify({ ...state, contactActive: contactFlow.active }));
+    } catch {
+      // Storage full or unavailable — the terminal still works, just without persistence.
+    }
+  }, [contactFlow.active, hydrated, state]);
 
   const handleCommand = (rawInput: string) => {
     const input = rawInput.trim();
@@ -233,9 +242,8 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     const result = command.execute(args);
 
     if (result === "__CLEAR__") {
+      // The save effect persists the cleared state; no need to touch localStorage here.
       dispatch({ type: "clear" });
-      localStorage.removeItem(TERMINAL_STORAGE_KEY);
-      localStorage.removeItem(TERMINAL_WELCOME_VERSION_KEY);
       return;
     }
 

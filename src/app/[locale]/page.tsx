@@ -1,7 +1,6 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { use, useEffect, useMemo, useState } from "react";
 import IntroAnimation from "@/components/intro/IntroAnimation";
 import Terminal from "@/components/terminal/Terminal";
@@ -28,7 +27,6 @@ interface HomePageProps {
 
 export default function HomePage({ params }: HomePageProps) {
   const { locale: routeLocale } = use(params);
-  const router = useRouter();
   const [phase, setPhase] = useState<Phase>("intro");
   const [locale, setLocale] = useState<AppLocale>(isValidLocale(routeLocale) ? routeLocale : "en");
 
@@ -40,18 +38,17 @@ export default function HomePage({ params }: HomePageProps) {
   }, []);
 
   useEffect(() => {
-    if (!isValidLocale(routeLocale)) {
-      router.replace("/en");
-      return;
+    if (isValidLocale(routeLocale)) {
+      setLocale(routeLocale);
     }
 
-    setLocale(routeLocale);
-
+    // Honor the stored preference, and keep the URL in sync with what we render.
     const preferred = localStorage.getItem("preferred-locale");
-    if (preferred === "en" || preferred === "zh") {
+    if ((preferred === "en" || preferred === "zh") && preferred !== routeLocale) {
       setLocale(preferred);
+      window.history.replaceState(null, "", `/${preferred}`);
     }
-  }, [routeLocale, router]);
+  }, [routeLocale]);
 
   const welcomeLines = useMemo(
     () => [asciiWelcome, "Type 'help' to see available commands.", "────────────────────────────────────"],

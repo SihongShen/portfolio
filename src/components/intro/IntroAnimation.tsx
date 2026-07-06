@@ -29,13 +29,15 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
       setCursorVisible((prev) => !prev);
     }, 500);
 
+    let typingTimer: number | null = null;
     const startTyping = window.setTimeout(() => {
       let index = 0;
-      const typingTimer = window.setInterval(() => {
+      typingTimer = window.setInterval(() => {
         index += 1;
         setTypedCount(index);
-        if (index >= baseText.length) {
+        if (index >= baseText.length && typingTimer !== null) {
           window.clearInterval(typingTimer);
+          typingTimer = null;
         }
       }, 80);
     }, 1000);
@@ -43,6 +45,9 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
     return () => {
       window.clearInterval(cursorTimer);
       window.clearTimeout(startTyping);
+      if (typingTimer !== null) {
+        window.clearInterval(typingTimer);
+      }
     };
   }, []);
 
@@ -105,17 +110,20 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
     setCanSelectLanguage(false);
     setIsFinishing(true);
 
+    let waitTimeout: number | null = null;
+    let turnOffTimeout: number | null = null;
+
     const fillTimer = window.setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           window.clearInterval(fillTimer);
 
           const waitMs = Math.floor(Math.random() * 1001) + 1000;
-          window.setTimeout(() => {
+          waitTimeout = window.setTimeout(() => {
             setIsTurningOff(true);
-            
+
             // Wait 600ms for animation, plus 500ms before connecting to terminal => 1100ms
-            window.setTimeout(() => {
+            turnOffTimeout = window.setTimeout(() => {
               onComplete(selectedLocale);
             }, 1100);
           }, waitMs);
@@ -129,6 +137,12 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
 
     return () => {
       window.clearInterval(fillTimer);
+      if (waitTimeout !== null) {
+        window.clearTimeout(waitTimeout);
+      }
+      if (turnOffTimeout !== null) {
+        window.clearTimeout(turnOffTimeout);
+      }
     };
   }, [onComplete, selectedLocale]);
 

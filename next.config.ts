@@ -5,7 +5,16 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
-    "/**": ["./src/content/projects/**/*.mdx"],
+    "/**": ["./src/content/projects/**/*.mdx", "./src/content/about/**/*.mdx"],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/en",
+        permanent: false,
+      },
+    ];
   },
 };
 

@@ -3,7 +3,6 @@
 import { use, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import Terminal from "@/components/terminal/Terminal";
 import MobileTerminalTrigger from "@/components/layout/MobileTerminalTrigger";
@@ -44,14 +43,20 @@ function useProjectContent(projectId: string | null, locale: string) {
 
     let isMounted = true;
     setIsLoading(true);
-    getProjectMdxSerialized(projectId, locale).then((res) => {
-      if (isMounted) {
-        if (res.success && res.compiled) {
+    getProjectMdxSerialized(projectId, locale)
+      .then((res) => {
+        if (isMounted && res.success && res.compiled) {
           setContent(res.compiled);
         }
-        setIsLoading(false);
-      }
-    });
+      })
+      .catch(() => {
+        // Falls through to the RECORDS_UNAVAILABLE state below.
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
 
     return () => {
       isMounted = false;
@@ -68,7 +73,6 @@ interface ProjectDetailPageProps {
 export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { locale, id } = use(params);
   const router = useRouter();
-  const t = useTranslations("projects");
 
   const sorted = useMemo(
     () => [...projects].sort((a, b) => (a.date < b.date ? 1 : -1)),
@@ -224,7 +228,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
           </motion.div>
 
           {/* Navigation Buttons */}
-          <div className="pointer-events-none fixed inset-y-0 left-0 w-full max-w-[calc(50vw-448px)] flex justify-center hidden md:flex">
+          <div className="pointer-events-none fixed inset-y-0 left-0 w-full max-w-[calc(50vw-448px)] justify-center hidden xl:flex">
             <div className="relative h-full w-[120px]">
               {selectedIndex > 0 ? (
                 <div className="absolute top-1/2 -translate-y-1/2 left-0">
@@ -238,7 +242,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               ) : null}
             </div>
           </div>
-          <div className="pointer-events-none fixed inset-y-0 right-0 w-full max-w-[calc(50vw-448px)] justify-center hidden md:flex">
+          <div className="pointer-events-none fixed inset-y-0 right-0 w-full max-w-[calc(50vw-448px)] justify-center hidden xl:flex">
             <div className="relative h-full w-[120px]">
               {selectedIndex < sorted.length - 1 ? (
                 <div className="absolute top-1/2 -translate-y-1/2 right-0">
