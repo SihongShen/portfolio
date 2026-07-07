@@ -174,13 +174,15 @@ export default function CosmicClutter() {
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
-    const clock = new THREE.Clock();
+    let lastTime = performance.now();
     let elapsed = 0;
     let frame = 0;
     let paused = false;
 
     const renderFrame = () => {
-      const delta = Math.min(clock.getDelta(), 0.05);
+      const now = performance.now();
+      const delta = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
       elapsed += delta;
 
       for (const drifter of drifters) {
@@ -212,7 +214,7 @@ export default function CosmicClutter() {
         window.cancelAnimationFrame(frame);
       } else if (paused && !reducedMotion) {
         paused = false;
-        clock.getDelta();
+        lastTime = performance.now();
         frame = window.requestAnimationFrame(loop);
       }
     };
@@ -248,8 +250,10 @@ export default function CosmicClutter() {
     };
   }, []);
 
+  // .cosmic-reveal (globals.css) fades the scene in from the center outward
+  // by animating a registered @property that drives a radial mask.
   return (
-    <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
+    <div className="cosmic-reveal pointer-events-none fixed inset-0 z-0" aria-hidden>
       <canvas ref={canvasRef} className="h-full w-full" />
     </div>
   );

@@ -20,6 +20,15 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
   });
 
   commands.push({
+    name: "home",
+    description: locale === "zh" ? "回到终端主页" : "Back to the terminal home",
+    execute: () => {
+      navigate(`/${locale}`, locale === "zh" ? "> 成功返回" : "> Welcome back");
+      return locale === "zh" ? "正在返回主页…" : "Heading home...";
+    }
+  });
+
+  commands.push({
     name: "about",
     description: locale === "zh" ? "了解关于我的信息" : "Go to about page",
     execute: () => {
