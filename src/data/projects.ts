@@ -70,7 +70,7 @@ export const projects: ProjectItem[] = [
     name: { en: "MONOMYTH.exe", zh: "MONOMYTH.exe" },
     date: "2025-12",
     techStack: ["React", "JavaScript", "Tailwind CSS", "node.js", "Vite", "Gemini API", "MediaPipe", "Vercel", "eslint", "html2pdf"],
-    tags: ["Interactive storytelling", "game", "Frontend development", "web app", "interactive design"],
+    tags: ["machine learning", "interactive storytelling", "game", "Frontend development", "web app", "interactive design"],
     description: { 
       en: "An interactive web game that uses Gemini API and Mediapipe hand model to generate a personalized “hero’s journey” myth based on a single word provided by the user.", 
       zh: "一个互动式网页游戏，使用 Gemini API 和 Mediapipe 手部模型，根据用户提供的单词生成个性化的“英雄之旅”神话故事。"

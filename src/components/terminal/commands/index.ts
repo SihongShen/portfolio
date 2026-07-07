@@ -30,13 +30,29 @@ export function buildCommands({ locale, navigate, switchLocale, projectTags }: B
 
   commands.push({
     name: "projects",
-    description: locale === "zh" ? "查看我的项目" : "Check out my projects",
-    execute: () => {
+    description: locale === "zh" ? "查看我的项目: projects [tag]" : "Check out my projects: projects [tag]",
+    execute: (args: string[]) => {
+      if (args.length > 0) {
+        const query = args.join(" ").toLowerCase();
+        const matched =
+          projectTags.find((tag) => tag.toLowerCase() === query) ??
+          projectTags.find((tag) => tag.toLowerCase().startsWith(query));
+
+        if (!matched) {
+          return locale === "zh"
+            ? `未找到 tag: ${args.join(" ")}\n> 可用 tags: ${projectTags.join(", ")}`
+            : `Unknown tag: ${args.join(" ")}\nAvailable tags: ${projectTags.join(", ")}`;
+        }
+
+        navigate(
+          `/${locale}/projects?tag=${encodeURIComponent(matched)}`,
+          locale === "zh" ? "> 成功打开" : "> Successfully opened"
+        );
+        return locale === "zh" ? `正在打开 #${matched} 的筛选结果…` : `Opening projects filtered by #${matched}...`;
+      }
+
       navigate(`/${locale}/projects`, locale === "zh" ? "> 成功打开" : "> Successfully opened");
-      const tagsStr = projectTags.length > 0 ? projectTags.join(", ") : "None";
-      return locale === "zh"
-        ? `正在打开 我的项目 页面…\n> 项目 tags: ${tagsStr}`
-        : `Opening Projects page...\nProject tags: ${tagsStr}`;
+      return locale === "zh" ? "正在打开 我的项目 页面…" : "Opening Projects page...";
     }
   });
 

@@ -141,7 +141,7 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
           const timer = window.setTimeout(() => {
             dispatch({ type: "push", line: { type: "output", content: successMessage } });
             router.push(path);
-          }, 650);
+          }, 1250);
           pendingNavTimers.current.push(timer);
         },
         switchLocale: onLocaleChange,
@@ -292,6 +292,15 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
     }
 
     dispatch({ type: "push", line: { type: "output", content: result } });
+
+    // Bare `projects` also lists the tags as clickable filter chips.
+    if (commandName === "projects" && args.length === 0 && projectTags.length > 0) {
+      dispatch({
+        type: "push",
+        line: { type: "output", content: locale === "zh" ? "> 项目 tags(点击筛选):" : "> Project tags (click to filter):" }
+      });
+      dispatch({ type: "push", line: { type: "tags", content: projectTags.join(",") } });
+    }
   };
 
   const handleHistory = (direction: "up" | "down") => {
@@ -419,11 +428,12 @@ export default function Terminal({ locale, welcomeLines, floating = false, onLoc
                 : undefined
             }
           />
-          <TerminalBody lines={state.lines} />
+          <TerminalBody lines={state.lines} onTagClick={(tag) => handleCommand(`projects ${tag}`)} />
           <TerminalInput
             prompt={contactFlow.active ? `platform>` : "$"}
             canCancel={contactFlow.active}
             completions={commands.map((command) => command.name)}
+            argCompletions={{ lang: ["en", "zh"], projects: projectTags }}
             onSubmit={(value) => {
               handleCommand(value);
             }}

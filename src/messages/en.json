@@ -17,7 +17,6 @@
     "archive": "Project Archive",
     "prev": "Previous project",
     "next": "Next project",
-    "filterPlaceholder": "type to filter projects...",
     "noResults": "No matching projects.",
     "clearFilters": "clear filters"
   },

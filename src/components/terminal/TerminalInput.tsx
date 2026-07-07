@@ -9,6 +9,8 @@ interface TerminalInputProps {
   onCancel: () => void;
   canCancel?: boolean;
   completions?: string[];
+  // Per-command argument completions, e.g. { lang: ["en", "zh"] }.
+  argCompletions?: Record<string, string[]>;
   prompt?: string;
 }
 
@@ -29,6 +31,7 @@ export default function TerminalInput({
   onCancel,
   canCancel = false,
   completions = [],
+  argCompletions = {},
   prompt = "$"
 }: TerminalInputProps) {
   const [value, setValue] = useState("");
@@ -75,12 +78,19 @@ export default function TerminalInput({
               event.preventDefault();
               const current = value;
 
-              // Second-token completion for "lang en|zh".
-              const langMatch = current.match(/^(lang\s+)(\S*)$/);
-              if (langMatch) {
-                const options = ["en", "zh"].filter((option) => option.startsWith(langMatch[2].toLowerCase()));
-                if (options.length === 1) {
-                  setValue(`${langMatch[1]}${options[0]}`);
+              // Argument completion, e.g. "lang z" -> "lang zh", "projects vid" -> "projects video".
+              const argMatch = current.match(/^(\S+)\s+(.*)$/);
+              if (argMatch) {
+                const options = argCompletions[argMatch[1].toLowerCase()] ?? [];
+                const rest = argMatch[2];
+                const matches = options.filter((option) => option.toLowerCase().startsWith(rest.toLowerCase()));
+                if (matches.length === 1) {
+                  setValue(`${argMatch[1]} ${matches[0]}`);
+                } else if (matches.length > 1) {
+                  const prefix = longestCommonPrefix(matches);
+                  if (prefix.length > rest.length) {
+                    setValue(`${argMatch[1]} ${prefix}`);
+                  }
                 }
                 return;
               }
