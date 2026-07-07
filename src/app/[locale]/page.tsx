@@ -1,9 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { use, useEffect, useMemo, useState } from "react";
 import IntroAnimation from "@/components/intro/IntroAnimation";
 import Terminal from "@/components/terminal/Terminal";
+
+// three.js only loads once the terminal phase starts — never blocks first paint.
+const CosmicClutter = dynamic(() => import("@/components/three/CosmicClutter"), { ssr: false });
 import { isValidLocale, rememberLocale, type AppLocale } from "@/lib/i18n";
 import type { Phase } from "@/types/terminal";
 
@@ -72,6 +76,8 @@ export default function HomePage({ params }: HomePageProps) {
           />
         ) : null}
       </AnimatePresence>
+
+      {phase === "terminal" ? <CosmicClutter /> : null}
 
       {phase === "terminal" ? (
         <motion.div
