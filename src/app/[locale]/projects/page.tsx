@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, use, useMemo, useState } from "react";
+import { Suspense, use, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -23,46 +23,19 @@ interface ProjectsPageProps {
 interface ProjectsViewProps {
   locale: AppLocale;
   selectedTags: string[];
-  onTagsChange: (next: string[]) => void;
 }
 
-function ProjectsView({ locale, selectedTags, onTagsChange }: ProjectsViewProps) {
+function ProjectsView({ locale, selectedTags }: ProjectsViewProps) {
   const t = useTranslations("projects");
-  const [query, setQuery] = useState("");
 
-  const toggleTag = (tag: string) => {
-    onTagsChange(
-      selectedTags.includes(tag) ? selectedTags.filter((item) => item !== tag) : [...selectedTags, tag]
-    );
-  };
-
-  const clearFilters = () => {
-    setQuery("");
-    onTagsChange([]);
-  };
-
-  const normalizedQuery = query.trim().toLowerCase();
-  const visible = SORTED_PROJECTS.filter((project) => {
-    const matchesTags = selectedTags.length === 0 || selectedTags.some((tag) => project.tags.includes(tag));
-    if (!matchesTags) {
-      return false;
-    }
-
-    if (!normalizedQuery) {
-      return true;
-    }
-
-    const haystack = [project.name.en, project.name.zh, ...project.tags, ...project.techStack]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(normalizedQuery);
-  });
-
-  const hasActiveFilters = selectedTags.length > 0 || normalizedQuery.length > 0;
+  // Filtering is driven by the terminal (`projects <tag>`) via the ?tag= param.
+  const visible = SORTED_PROJECTS.filter(
+    (project) => selectedTags.length === 0 || selectedTags.some((tag) => project.tags.includes(tag))
+  );
 
   return (
     <>
-      
+
 
       {visible.length === 0 ? (
         <p className="text-[var(--terminal-secondary)] opacity-70">{t("noResults")}</p>
@@ -125,19 +98,7 @@ function ProjectsViewWithParams({ locale }: { locale: AppLocale }) {
     return tagParam.split(",").filter((tag) => ALL_TAGS.includes(tag));
   }, [tagParam]);
 
-  const onTagsChange = (next: string[]) => {
-    const params = new URLSearchParams(window.location.search);
-    if (next.length) {
-      params.set("tag", next.join(","));
-    } else {
-      params.delete("tag");
-    }
-    const qs = params.toString();
-    // Native replaceState keeps useSearchParams in sync (Next shallow routing).
-    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
-  };
-
-  return <ProjectsView locale={locale} selectedTags={selectedTags} onTagsChange={onTagsChange} />;
+  return <ProjectsView locale={locale} selectedTags={selectedTags} />;
 }
 
 export default function ProjectsPage({ params }: ProjectsPageProps) {
@@ -168,7 +129,7 @@ export default function ProjectsPage({ params }: ProjectsPageProps) {
         >
           <h1 className="mb-6 text-3xl">{t("title")}</h1>
           {/* The fallback renders the unfiltered list so static HTML still contains every project link. */}
-          <Suspense fallback={<ProjectsView locale={locale} selectedTags={[]} onTagsChange={() => {}} />}>
+          <Suspense fallback={<ProjectsView locale={locale} selectedTags={[]} />}>
             <ProjectsViewWithParams locale={locale} />
           </Suspense>
         </motion.div>
